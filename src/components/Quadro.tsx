@@ -5,12 +5,7 @@ import type { Card, Columns } from "../types";
 export default function App(){
 
   const [columns, setColumns] = useState<Columns>({
-    "Backlog": [{ id: "1", title: "Estudar nova matéria de PO" },
-      { id: "2", title: "Estudar para prova de Testes de Software" },
-      { id: "3", title: "Terminar de ler didascalicon" },
-      { id: "4", title: "Apresentar seminário 2" },
-      { id: "5", title: "Demais afazeres" }
-    ],
+    "Backlog": [],
     "Em Desenvolvimento": [],
     "Em Revisão": [],
     "Em Teste": [],

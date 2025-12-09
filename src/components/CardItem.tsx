@@ -10,7 +10,8 @@ interface CardItemProps {
 export default function CardItem({ card, onDragStart, onRemove }: CardItemProps) {
 
   const [isEditing, setIsEditing] = useState(false);
-
+  const [content, setContent] = useState(card.title);
+  
   return (
     <div
       className="card"
@@ -29,15 +30,17 @@ export default function CardItem({ card, onDragStart, onRemove }: CardItemProps)
       }}
     >
       {!isEditing ? (
-        <p style={{ margin: 0}}>{card.title}</p>
+        <p style={{ margin: 0}}>{content}</p>
       ): (
         <input
           autoFocus
+          value={content}
           defaultValue={card.title}
           onBlur={() => setIsEditing(false)}
           onKeyDown={(e) => {
             if (e.key === "Enter") setIsEditing(false);
           }}
+          onChange={(e) => setContent(e.target.value)}
           style={{
             flex: 1,
             marginRight: "8px",

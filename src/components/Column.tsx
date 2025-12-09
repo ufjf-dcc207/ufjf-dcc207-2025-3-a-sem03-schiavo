@@ -6,11 +6,11 @@ interface ColumnProps {
   title: string;
   cards: Card[];
   onDropCard: (cardId: string, newColumn: string) => void;
-  onRemoveCard: (columnName: string, cardId: string) => void; // 🆕
+  onRemoveCard: (columnName: string, cardId: string) => void;
   onAddCard: (title: string, columnName: string) => void;
 }
 
-const Column = ({ title, cards, onDropCard, onRemoveCard, onAddCard }: ColumnProps) => {
+export default function Column({ title, cards, onDropCard, onRemoveCard, onAddCard }: ColumnProps) {
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     const cardId = e.dataTransfer.getData("cardId");
@@ -70,5 +70,3 @@ const Column = ({ title, cards, onDropCard, onRemoveCard, onAddCard }: ColumnPro
     </div>
   );
 };
-
-export default Column;

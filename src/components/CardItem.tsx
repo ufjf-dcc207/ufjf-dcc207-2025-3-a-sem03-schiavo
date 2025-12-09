@@ -1,26 +1,22 @@
-// Esse arquivo irá conter os cards
-
 import type { Card } from '../types';
-
-
-/**
- * Essa função "onDragStart", é acionada quando arrasta um elemento.
- * https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dragstart_event
- * https://dev.to/cristiansifuentes/mastering-mouse-events-in-react-typescript-click-drag-hover-and-beyond-21a6
-*/
+import { useState } from 'react';
 
 interface CardItemProps {
   card: Card;
   onDragStart: (e: React.DragEvent<HTMLDivElement>, cardId: string) => void;
-  onRemove: () => void; // 🆕
+  onRemove: () => void;
 }
 
-const CardItem = ({ card, onDragStart, onRemove }: CardItemProps) => {
+export default function CardItem({ card, onDragStart, onRemove }: CardItemProps) {
+
+  const [isEditing, setIsEditing] = useState(false);
+
   return (
     <div
       className="card"
       draggable
       onDragStart={(e) => onDragStart(e, card.id)}
+      onDoubleClick={() => setIsEditing(true)}
       style={{
         display: "flex",
         justifyContent: "space-between",
@@ -32,7 +28,24 @@ const CardItem = ({ card, onDragStart, onRemove }: CardItemProps) => {
         backgroundColor: "#fff",
       }}
     >
-      <p style={{ margin: 0 }}>{card.title}</p>
+      {!isEditing ? (
+        <p style={{ margin: 0}}>{card.title}</p>
+      ): (
+        <input
+          autoFocus
+          defaultValue={card.title}
+          onBlur={() => setIsEditing(false)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") setIsEditing(false);
+          }}
+          style={{
+            flex: 1,
+            marginRight: "8px",
+            padding: "4px 6px",
+          }}
+          />
+      )}
+
       <button
         onClick={onRemove}
         style={{
@@ -48,5 +61,3 @@ const CardItem = ({ card, onDragStart, onRemove }: CardItemProps) => {
     </div>
   );
 };
-
-export default CardItem;

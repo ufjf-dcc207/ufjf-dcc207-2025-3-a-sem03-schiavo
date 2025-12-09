@@ -2,13 +2,13 @@ import { useState } from "react";
 import Column from "./Column";
 import type { Card, Columns } from "../types";
 
-const App = () => {
+export default function App(){
+
   const [columns, setColumns] = useState<Columns>({
     "Backlog": [{ id: "1", title: "Estudar nova matéria de PO" },
       { id: "2", title: "Estudar para prova de Testes de Software" },
       { id: "3", title: "Terminar de ler didascalicon" }
     ],
-    
     "Em Desenvolvimento": [],
     "Em Revisão": [],
     "Em Teste": [],
@@ -76,5 +76,3 @@ const App = () => {
     </div>
   );
 };
-
-export default App;

@@ -35,8 +35,6 @@ export default function Column({ title, cards, onDropCard, onRemoveCard, onAddCa
     setIsAdding(false);
   }
 
-  // const isDevLocked = title === "Em Desenvolvimento" && isLocked;
-
   return (
     <div className="column" onDrop={handleDrop} onDragOver={handleDragOver}
     style={{
@@ -64,13 +62,10 @@ export default function Column({ title, cards, onDropCard, onRemoveCard, onAddCa
         <>
           {!isAdding ? (
           <button className="add-card-btn" onClick={() => {
-            // if (isLocked) return;
             setIsAdding(true);
           }}
-          // disabled={isLocked}
           >
             + Adicionar Card
-            {/* {isLocked ? "🔒 Limite de 5 cards atingido" : "+ Adicionar card"} */}
           </button>
           ): (
           <div className="add-card-form">
@@ -98,7 +93,6 @@ export default function Column({ title, cards, onDropCard, onRemoveCard, onAddCa
             onDragStart={(e, id) => e.dataTransfer.setData("cardId", id)}
             onRemove={() => {
               onRemoveCard(title, card.id);
-              // unlockColumn();
             }}
           />
         ))}

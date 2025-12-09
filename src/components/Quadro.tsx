@@ -25,21 +25,34 @@ export default function App(){
   const handleDropCard = (cardId: string, newColumn: string) => {
     let draggedCard: Card | null = null;
 
-    const updated: Columns = Object.fromEntries(
-      Object.entries(columns).map(([colName, cards]) => {
-        const filtered = cards.filter((c) => {
-          if (c.id === cardId) draggedCard = c;
-          return c.id !== cardId;
-        });
-        return [colName, filtered];
-      })
-    );
+    const updated: Columns = {};
 
-    if (draggedCard) {
-      updated[newColumn] = [...(updated[newColumn] || []), draggedCard];
+    for (const colName in columns) {
+      const oldCards = columns[colName];
+      const newCards: Card[] = [];
+
+      for (let i = 0; i < oldCards.length; i++) {
+        const card = oldCards[i];
+
+        if (card.id === cardId) {
+          draggedCard = card;
+        } else {
+          newCards.push(card);
+        }
+      }
+      updated[colName] = newCards;
+    }
+
+    if (draggedCard !== null) {
+      if (!updated[newColumn]) {
+        updated[newColumn] = []
+      }
+
+      updated[newColumn].push(draggedCard);
       setColumns(updated);
       resetLock(updated);
     }
+
   };
 
   const handleAddCard = (title: string, columnName: string) => {
@@ -47,25 +60,52 @@ export default function App(){
       id: Math.random().toString(36).substring(2, 9),
       title,
     };
-    const updated = {
-      ...columns,
-      [columnName]: [...columns[columnName], newCard],
-    };
 
-    if (columnName === "Em Desenvolvimento" &&  1 > 5) {
-      setLocked(true);
+    const updated: Columns = {};
+
+    for (const col in columns) {
+      const oldCards = columns[col];
+      const newCards: Card[] = [];
+
+      for (let i = 0; i < oldCards.length; i++) {
+        newCards.push(oldCards[i]);
+      }
+
+      updated[col] = newCards;
     }
+
+    if (!updated[columnName]) {
+      updated[columnName] = [];
+    }
+
+    updated[columnName].push(newCard);
+
     setColumns(updated);
     resetLock(updated);
   }
 
   const handleRemoveCard = (columnName: string, cardId: string) => {
-    const updated: Columns = {
-      ...columns,
-      [columnName]: columns[columnName].filter((c) => c.id !== cardId)
-    };
+
+    const updated: Columns = {};
+
+    for (const col in columns) {
+      const oldCards = columns[col];
+      const newCards: Card[] = [];
+
+      for (let i = 0; i < oldCards.length; i++) {
+        const card = oldCards[i];
+        if (col === columnName && card.id === cardId) {
+          continue;
+        }
+
+        newCards.push(card);
+      }
+      updated[col] = newCards;
+    }
+
     setColumns(updated);
     resetLock(updated);
+
   };
 
   return (

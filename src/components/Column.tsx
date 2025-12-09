@@ -25,6 +25,10 @@ export default function Column({ title, cards, onDropCard, onRemoveCard, onAddCa
   const [isAdding, setIsAdding] = useState(false);
   const [isLocked, setLocked] = useState(false);
 
+  const unlockColumn = () => {
+    setLocked(false);
+  };
+
   const handleAddCard = () => {
     if (isLocked) return;
     const trimmed = newTitle.trim();
@@ -74,7 +78,10 @@ export default function Column({ title, cards, onDropCard, onRemoveCard, onAddCa
           key={card.id}
           card={card}
           onDragStart={(e, id) => e.dataTransfer.setData("cardId", id)}
-          onRemove={() => onRemoveCard(title, card.id)}
+          onRemove={() => {
+            onRemoveCard(title, card.id);
+            unlockColumn();
+          }}
         />
       ))}
     </div>

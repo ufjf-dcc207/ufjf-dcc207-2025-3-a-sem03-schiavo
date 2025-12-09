@@ -7,7 +7,9 @@ export default function App(){
   const [columns, setColumns] = useState<Columns>({
     "Backlog": [{ id: "1", title: "Estudar nova matéria de PO" },
       { id: "2", title: "Estudar para prova de Testes de Software" },
-      { id: "3", title: "Terminar de ler didascalicon" }
+      { id: "3", title: "Terminar de ler didascalicon" },
+      { id: "4", title: "Apresentar seminário 2" },
+      { id: "5", title: "Demais afazeres" }
     ],
     "Em Desenvolvimento": [],
     "Em Revisão": [],
@@ -112,7 +114,7 @@ export default function App(){
     <div className="board-container">
         <div className="board-painel">
             <div className="board-header">
-                <h1>Quadro Exemplo</h1>
+                <h1>TAREFAS</h1>
             </div>
             <div className="board">
             {Object.entries(columns).map(([colName, cards]) => (

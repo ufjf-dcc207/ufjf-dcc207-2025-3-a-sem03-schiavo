@@ -1,4 +1,3 @@
-// Esse arquivo irá centralizar as tipagens dos componentes do projeto
 
 export interface Card {
     id: string;

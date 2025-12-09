@@ -36,17 +36,28 @@ export default function CardItem({ card, onDragStart, onRemove }: CardItemProps)
           autoFocus
           value={content}
           defaultValue={card.title}
-          onBlur={() => setIsEditing(false)}
+          onBlur={() => {
+            if (content.trim() === "") {
+              setContent(card.title);
+            }
+            setIsEditing(false)}}
           onKeyDown={(e) => {
-            if (e.key === "Enter") setIsEditing(false);
+            if (e.key === "Enter") {
+              if (content.trim() === "") {
+                setContent(card.title)
+              }
+              setIsEditing(false);
+            }
           }}
-          onChange={(e) => setContent(e.target.value)}
+          onChange={(e) => {
+            setContent(e.target.value);
+          }}
           style={{
             flex: 1,
             marginRight: "8px",
             padding: "4px 6px",
           }}
-          />
+        />
       )}
 
       <button

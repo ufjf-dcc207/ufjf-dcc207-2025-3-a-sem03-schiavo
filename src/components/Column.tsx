@@ -13,6 +13,9 @@ interface ColumnProps {
 
 export default function Column({ title, cards, onDropCard, onRemoveCard, onAddCard, isLocked }: ColumnProps) {
 
+  const [newTitle, setNewTitle] = useState("");
+  const [isAdding, setIsAdding] = useState(false);
+
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     if (title === "Em Desenvolvimento" && isLocked) return;
     const cardId = e.dataTransfer.getData("cardId");
@@ -23,9 +26,6 @@ export default function Column({ title, cards, onDropCard, onRemoveCard, onAddCa
     if (title === "Em Desenvolvimento" && isLocked) return;
     e.preventDefault();
   };
-
-  const [newTitle, setNewTitle] = useState("");
-  const [isAdding, setIsAdding] = useState(false);
 
   const handleAddCard = () => {
     const trimmed = newTitle.trim();

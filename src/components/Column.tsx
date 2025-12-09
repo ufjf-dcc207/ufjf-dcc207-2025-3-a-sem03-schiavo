@@ -90,17 +90,19 @@ export default function Column({ title, cards, onDropCard, onRemoveCard, onAddCa
           )}
         </>
       )}
-      {cards.map((card) => (
-        <CardItem
-          key={card.id}
-          card={card}
-          onDragStart={(e, id) => e.dataTransfer.setData("cardId", id)}
-          onRemove={() => {
-            onRemoveCard(title, card.id);
-            // unlockColumn();
-          }}
-        />
-      ))}
+      <div className="cards-container">
+        {cards.map((card) => (
+          <CardItem
+            key={card.id}
+            card={card}
+            onDragStart={(e, id) => e.dataTransfer.setData("cardId", id)}
+            onRemove={() => {
+              onRemoveCard(title, card.id);
+              // unlockColumn();
+            }}
+          />
+        ))}
+      </div>
     </div>
   );
 };

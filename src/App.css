@@ -7,6 +7,8 @@ body {
 
 .board {
   display: flex;
+  overflow: hidden;
+  gap: 16px;
   justify-content: space-around;
   align-items: flex-start;
   height: 100vh;
@@ -39,6 +41,10 @@ body {
 }
 
 .column {
+  display: flex;
+  height: 420px;
+  flex-direction: column;
+  overflow: hidden;
   background: #fff;
   border-radius: 8px;
   padding: 10px;
@@ -116,4 +122,10 @@ body {
 
 .form-actions button.cancel {
   background-color: #ddd;
+}
+
+.cards-container {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 6px;
 }

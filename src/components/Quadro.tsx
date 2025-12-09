@@ -11,7 +11,7 @@ export default function App(){
     "Em Teste": [],
     "Concluído": []
   });
-
+  
   const [isLocked, setLocked] = useState(false);
 
   const resetLock = (cols: Columns) => {

@@ -23,10 +23,15 @@ export default function Column({ title, cards, onDropCard, onRemoveCard, onAddCa
 
   const [newTitle, setNewTitle] = useState("");
   const [isAdding, setIsAdding] = useState(false);
+  const [isLocked, setLocked] = useState(false);
 
   const handleAddCard = () => {
+    if (isLocked) return;
     const trimmed = newTitle.trim();
     if (!trimmed) return;
+    if (cards.length + 1 >= 5) {
+      setLocked(true);
+    }
     onAddCard(trimmed, title);
     setNewTitle("");
     setIsAdding(false);
@@ -38,8 +43,13 @@ export default function Column({ title, cards, onDropCard, onRemoveCard, onAddCa
       {title === "Backlog" && ( 
         <>
           {!isAdding ? (
-          <button className="add-card-btn" onClick={() => setIsAdding(true)}>
-            + Adicionar card
+          <button className="add-card-btn" onClick={() => {
+            if (isLocked) return;
+            setIsAdding(true);
+          }}
+          disabled={isLocked}
+          >
+            {isLocked ? "🔒 Limite de 5 cards atingido" : "+ Adicionar card"}
           </button>
           ): (
           <div className="add-card-form">
@@ -64,7 +74,7 @@ export default function Column({ title, cards, onDropCard, onRemoveCard, onAddCa
           key={card.id}
           card={card}
           onDragStart={(e, id) => e.dataTransfer.setData("cardId", id)}
-          onRemove={() => onRemoveCard(title, card.id)} // botão de remover
+          onRemove={() => onRemoveCard(title, card.id)}
         />
       ))}
     </div>

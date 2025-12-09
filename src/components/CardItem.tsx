@@ -11,7 +11,7 @@ export default function CardItem({ card, onDragStart, onRemove }: CardItemProps)
 
   const [isEditing, setIsEditing] = useState(false);
   const [content, setContent] = useState(card.title);
-  
+
   return (
     <div
       className="card"

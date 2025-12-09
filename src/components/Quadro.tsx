@@ -15,6 +15,13 @@ export default function App(){
     "Concluído": []
   });
 
+  const [isLocked, setLocked] = useState(false);
+
+  const resetLock = (cols: Columns) => {
+    const count = cols["Em Desenvolvimento"]?.length ?? 0;
+    setLocked(count >= 5);
+  }
+
   const handleDropCard = (cardId: string, newColumn: string) => {
     let draggedCard: Card | null = null;
 
@@ -31,6 +38,7 @@ export default function App(){
     if (draggedCard) {
       updated[newColumn] = [...(updated[newColumn] || []), draggedCard];
       setColumns(updated);
+      resetLock(updated);
     }
   };
 
@@ -43,7 +51,12 @@ export default function App(){
       ...columns,
       [columnName]: [...columns[columnName], newCard],
     };
+
+    if (columnName === "Em Desenvolvimento" &&  1 > 5) {
+      setLocked(true);
+    }
     setColumns(updated);
+    resetLock(updated);
   }
 
   const handleRemoveCard = (columnName: string, cardId: string) => {
@@ -52,6 +65,7 @@ export default function App(){
       [columnName]: columns[columnName].filter((c) => c.id !== cardId)
     };
     setColumns(updated);
+    resetLock(updated);
   };
 
   return (
@@ -69,6 +83,7 @@ export default function App(){
                 onDropCard={handleDropCard}
                 onRemoveCard={handleRemoveCard}
                 onAddCard={handleAddCard}
+                isLocked={colName === "Em Desenvolvimento" ? isLocked : false}
                 />
             ))}
             </div>

@@ -9,17 +9,17 @@ interface CardItemProps {
 }
 
 function getDays(createDate: number, now: number) {
-  const daysInMilliseconds = 24*60*60*1000;
+  const daysInMilliseconds = 5 * 1000;
   return Math.floor((now - createDate) / daysInMilliseconds);
 }
 
-function getColor(days: number) {
+function getCardColor(days: number) {
   if (days >= 6) {
-    return 'red';
+    return '#ff806a';
   } else if (days >= 3) {
-    return 'yellow';
+    return '#ffe867';
   }
-  return 'green';
+  return 'white';
 }
 
 export default function CardItem({ card, onDragStart, onRemove }: CardItemProps) {
@@ -29,25 +29,23 @@ export default function CardItem({ card, onDragStart, onRemove }: CardItemProps)
 
   const [now, setNow] = useState(() => Date.now());
 
-  const createDate = (card as any).createdAt ?? Date.now();
+  const createDate = useMemo(() => (card as any).createDate ?? Date.now(), [card]);
 
   useEffect(() => {
 
-    const id = setInterval(() => {
-      setNow(Date.now()), 10_000
-    }, 30_000);
-
+   const id = setInterval(() => setNow(Date.now()), 5_000);
     return () => clearInterval(id);
   }, []);
 
   const days = useMemo(() => getDays(createDate, now), [createDate, now]);
-  const color =  useMemo(() => getColor(days), [days]);
+  const cardColor =  useMemo(() => getCardColor(days), [days]);
 
 
   return (
     <div
       className="card"
       draggable
+      title={`${days} dia(s)`}
       onDragStart={(e) => onDragStart(e, card.id)}
       onDoubleClick={() => setIsEditing(true)}
       style={{
@@ -55,24 +53,13 @@ export default function CardItem({ card, onDragStart, onRemove }: CardItemProps)
         justifyContent: "space-between",
         alignItems: "center",
         padding: "8px",
-        border: "1px solid #ccc",
+        border: "2px solid #000000",
         borderRadius: "8px",
         marginBottom: "8px",
-        backgroundColor: "#fff",
+        backgroundColor: cardColor,
       }}
     >
 
-      <span
-          style={{
-            width: 10,
-            height: 10,
-            borderRadius: 999,
-            backgroundColor: color,
-            border: "1px solid rgba(0,0,0,0.15)",
-            cursor: "default",
-          }}
-        />
-  
       {!isEditing ? (
         <p style={{ margin: 0}}>{content}</p>
       ): (

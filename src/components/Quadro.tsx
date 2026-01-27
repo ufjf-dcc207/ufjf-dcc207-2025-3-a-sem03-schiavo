@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useEffect } from "react";
 import Column from "./Column";
 import type { Card, Columns } from "../types";
 
@@ -14,10 +15,16 @@ export default function App(){
   
   const [isLocked, setLocked] = useState(false);
 
-  const resetLock = (cols: Columns) => {
-    const count = cols["Em Desenvolvimento"]?.length ?? 0;
+  // const resetLock = (cols: Columns) => {
+  //   const count = cols["Em Desenvolvimento"]?.length ?? 0;
+  //   setLocked(count >= 5);
+  // }
+
+  useEffect(() => {
+    console.log("teste");
+    const count = columns["Em Desenvolvimento"]?.length ?? 0;
     setLocked(count >= 5);
-  }
+  }, [columns["Em Desenvolvimento"]]);
 
   const handleDropCard = (cardId: string, newColumn: string) => {
     let draggedCard: Card | null = null;
@@ -47,7 +54,7 @@ export default function App(){
 
       updated[newColumn].push(draggedCard);
       setColumns(updated);
-      resetLock(updated);
+      // resetLock(updated);
     }
 
   };
@@ -78,7 +85,7 @@ export default function App(){
     updated[columnName].push(newCard);
 
     setColumns(updated);
-    resetLock(updated);
+    //resetLock(updated);
   }
 
   const handleRemoveCard = (columnName: string, cardId: string) => {
@@ -101,7 +108,7 @@ export default function App(){
     }
 
     setColumns(updated);
-    resetLock(updated);
+    //resetLock(updated);
 
   };
 

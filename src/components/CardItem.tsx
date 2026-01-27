@@ -1,5 +1,6 @@
 import type { Card } from '../types';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { useEffect } from 'react';
 
 interface CardItemProps {
   card: Card;
@@ -7,10 +8,41 @@ interface CardItemProps {
   onRemove: () => void;
 }
 
+function getDays(createDate: number, now: number) {
+  const daysInMilliseconds = 24*60*60*1000;
+  return Math.floor((now - createDate) / daysInMilliseconds);
+}
+
+function getColor(days: number) {
+  if (days >= 6) {
+    return 'red';
+  } else if (days >= 3) {
+    return 'yellow';
+  }
+  return 'green';
+}
+
 export default function CardItem({ card, onDragStart, onRemove }: CardItemProps) {
 
   const [isEditing, setIsEditing] = useState(false);
   const [content, setContent] = useState(card.title);
+
+  const [now, setNow] = useState(() => Date.now());
+
+  const createDate = (card as any).createdAt ?? Date.now();
+
+  useEffect(() => {
+
+    const id = setInterval(() => {
+      setNow(Date.now()), 10_000
+    }, 30_000);
+
+    return () => clearInterval(id);
+  }, []);
+
+  const days = useMemo(() => getDays(createDate, now), [createDate, now]);
+  const color =  useMemo(() => getColor(days), [days]);
+
 
   return (
     <div
@@ -29,6 +61,18 @@ export default function CardItem({ card, onDragStart, onRemove }: CardItemProps)
         backgroundColor: "#fff",
       }}
     >
+
+      <span
+          style={{
+            width: 10,
+            height: 10,
+            borderRadius: 999,
+            backgroundColor: color,
+            border: "1px solid rgba(0,0,0,0.15)",
+            cursor: "default",
+          }}
+        />
+  
       {!isEditing ? (
         <p style={{ margin: 0}}>{content}</p>
       ): (

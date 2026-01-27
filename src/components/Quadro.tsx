@@ -21,12 +21,16 @@ export default function App(){
   // }
 
   useEffect(() => {
-    console.log("teste");
     const count = columns["Em Desenvolvimento"]?.length ?? 0;
     setLocked(count >= 5);
   }, [columns["Em Desenvolvimento"]]);
 
+  useEffect(() => {
+    localStorage.setItem("board-columns", JSON.stringify(columns));
+  }, [columns]);
+
   const handleDropCard = (cardId: string, newColumn: string) => {
+
     let draggedCard: Card | null = null;
 
     const updated: Columns = {};

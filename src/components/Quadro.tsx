@@ -5,12 +5,19 @@ import type { Card, Columns } from "../types";
 
 export default function App(){
 
-  const [columns, setColumns] = useState<Columns>({
-    "Backlog": [],
-    "Em Desenvolvimento": [],
-    "Em Revisão": [],
-    "Em Teste": [],
-    "Concluído": []
+  const [columns, setColumns] = useState<Columns>(() => {
+    const saved = localStorage.getItem("board-columns");
+    if (saved) {
+      return JSON.parse(saved);
+    } else {
+      return {
+        "Backlog": [],
+        "Em Desenvolvimento": [],
+        "Em Revisão": [],
+        "Em Teste": [],
+        "Concluído": []
+      };
+    };
   });
   
   const [isLocked, setLocked] = useState(false);

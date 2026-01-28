@@ -1,49 +1,13 @@
-import { useState } from "react";
-import { useEffect } from "react";
+import { useEffect, useReducer, useState } from "react";
 import Column from "./Column";
-import type { Card, Columns } from "../types";
 
-const LOCAL_STORAGE_KEY = "123456";
+import { boardReducer, initBoard, LOCAL_STORAGE_KEY } from "../reducers/boardReducer";
 
-
-function garantCreated(cols: Columns): Columns {
-  const fixed: Columns = {};
-
-  for (const colName in cols) {
-    const cards = cols[colName] ?? [];
-    fixed[colName] = cards.map((card: any) => ({
-      ...card,
-      createDate: card.createDate ?? Date.now()
-    }));
-  };
-  return fixed;
-};
 
 export default function App(){
 
-  const [columns, setColumns] = useState<Columns>(() => {
-    const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
+  const [columns, dispatch] = useReducer(boardReducer, undefined as any, initBoard);
 
-    const baseColumns: Columns = {
-      "Backlog": [],
-      "Em Desenvolvimento": [],
-      "Em Revisão": [],
-      "Em Teste": [],
-      "Concluído": []
-    };
-
-    if (!saved) {
-      return baseColumns;
-    }
-
-    try {
-      const parsed = JSON.parse(saved) as Columns;
-      return garantCreated({...baseColumns, ...parsed});
-    } catch {
-      return baseColumns;
-    }
-  });
-  
   const [isLocked, setLocked] = useState(false);
 
   useEffect(() => {
@@ -57,91 +21,23 @@ export default function App(){
 
   const handleDropCard = (cardId: string, newColumn: string) => {
 
-    let draggedCard: Card | null = null;
-
-    const updated: Columns = {};
-
-    for (const colName in columns) {
-      const oldCards = columns[colName];
-      const newCards: Card[] = [];
-
-      for (let i = 0; i < oldCards.length; i++) {
-        const card = oldCards[i];
-
-        if (card.id === cardId) {
-          draggedCard = card;
-        } else {
-          newCards.push(card);
-        }
-      }
-      updated[colName] = newCards;
+    if (newColumn === "Em Desenvolvimento" && isLocked) {
+      return;
     }
 
-    if (draggedCard !== null) {
-      if (!updated[newColumn]) {
-        updated[newColumn] = []
-      }
-
-      const movedCard: any = {};
-      movedCard.id = draggedCard.id;
-      movedCard.title = draggedCard.title;
-      movedCard.createDate = Date.now();
-
-      updated[newColumn].push(movedCard);
-      setColumns(updated);
-    }
+    dispatch({type: "DROP_CARD", cardId, newColumn});
 
   };
 
   const handleAddCard = (title: string, columnName: string) => {
-    const newCard: Card = {
-      id: Math.random().toString(36).substring(2, 9),
-      title,
-      createDate: Date.now(),
-    } as any;
 
-    const updated: Columns = {};
+    dispatch({type: "ADD_CARD", title, columnName});
 
-    for (const col in columns) {
-      const oldCards = columns[col];
-      const newCards: Card[] = [];
-
-      for (let i = 0; i < oldCards.length; i++) {
-        newCards.push(oldCards[i]);
-      }
-
-      updated[col] = newCards;
-    }
-
-    if (!updated[columnName]) {
-      updated[columnName] = [];
-    }
-
-    updated[columnName].push(newCard);
-
-    setColumns(updated);
   }
 
   const handleRemoveCard = (columnName: string, cardId: string) => {
 
-    const updated: Columns = {};
-
-    for (const col in columns) {
-      const oldCards = columns[col];
-      const newCards: Card[] = [];
-
-      for (let i = 0; i < oldCards.length; i++) {
-        const card = oldCards[i];
-        if (col === columnName && card.id === cardId) {
-          continue;
-        }
-
-        newCards.push(card);
-      }
-      updated[col] = newCards;
-    }
-
-    setColumns(updated);
+    dispatch({type: "REMOVE_CARD", columnName, cardId});
 
   };
 

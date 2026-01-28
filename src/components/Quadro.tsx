@@ -3,29 +3,48 @@ import { useEffect } from "react";
 import Column from "./Column";
 import type { Card, Columns } from "../types";
 
+const LOCAL_STORAGE_KEY = "123456";
+
+
+function garantCreated(cols: Columns): Columns {
+  const fixed: Columns = {};
+
+  for (const colName in cols) {
+    const cards = cols[colName] ?? [];
+    fixed[colName] = cards.map((card: any) => ({
+      ...card,
+      createDate: card.createDate ?? Date.now()
+    }));
+  };
+  return fixed;
+};
+
 export default function App(){
 
   const [columns, setColumns] = useState<Columns>(() => {
-    const saved = localStorage.getItem("board-columns");
-    if (saved) {
-      return JSON.parse(saved);
-    } else {
-      return {
-        "Backlog": [],
-        "Em Desenvolvimento": [],
-        "Em Revisão": [],
-        "Em Teste": [],
-        "Concluído": []
-      };
+    const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
+
+    const baseColumns: Columns = {
+      "Backlog": [],
+      "Em Desenvolvimento": [],
+      "Em Revisão": [],
+      "Em Teste": [],
+      "Concluído": []
     };
+
+    if (!saved) {
+      return baseColumns;
+    }
+
+    try {
+      const parsed = JSON.parse(saved) as Columns;
+      return garantCreated({...baseColumns, ...parsed});
+    } catch {
+      return baseColumns;
+    }
   });
   
   const [isLocked, setLocked] = useState(false);
-
-  // const resetLock = (cols: Columns) => {
-  //   const count = cols["Em Desenvolvimento"]?.length ?? 0;
-  //   setLocked(count >= 5);
-  // }
 
   useEffect(() => {
     const count = columns["Em Desenvolvimento"]?.length ?? 0;
@@ -33,7 +52,7 @@ export default function App(){
   }, [columns["Em Desenvolvimento"]]);
 
   useEffect(() => {
-    localStorage.setItem("board-columns", JSON.stringify(columns));
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(columns));
   }, [columns]);
 
   const handleDropCard = (cardId: string, newColumn: string) => {
@@ -63,9 +82,13 @@ export default function App(){
         updated[newColumn] = []
       }
 
-      updated[newColumn].push(draggedCard);
+      const movedCard: any = {};
+      movedCard.id = draggedCard.id;
+      movedCard.title = draggedCard.title;
+      movedCard.createDate = Date.now();
+
+      updated[newColumn].push(movedCard);
       setColumns(updated);
-      // resetLock(updated);
     }
 
   };
@@ -74,7 +97,8 @@ export default function App(){
     const newCard: Card = {
       id: Math.random().toString(36).substring(2, 9),
       title,
-    };
+      createDate: Date.now(),
+    } as any;
 
     const updated: Columns = {};
 
@@ -96,7 +120,6 @@ export default function App(){
     updated[columnName].push(newCard);
 
     setColumns(updated);
-    //resetLock(updated);
   }
 
   const handleRemoveCard = (columnName: string, cardId: string) => {
@@ -119,7 +142,6 @@ export default function App(){
     }
 
     setColumns(updated);
-    //resetLock(updated);
 
   };
 

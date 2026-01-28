@@ -15,9 +15,9 @@ function getDays(createDate: number, now: number) {
 
 function getCardColor(days: number) {
   if (days >= 6) {
-    return '#ff806a';
+    return '#ffaea0';
   } else if (days >= 3) {
-    return '#ffe867';
+    return '#fdef9c';
   }
   return 'white';
 }
@@ -32,7 +32,6 @@ export default function CardItem({ card, onDragStart, onRemove }: CardItemProps)
   const createDate = useMemo(() => (card as any).createDate ?? Date.now(), [card]);
 
   useEffect(() => {
-
    const id = setInterval(() => setNow(Date.now()), 5_000);
     return () => clearInterval(id);
   }, []);

@@ -90,6 +90,7 @@ export default function Column({ title, cards, onDropCard, onRemoveCard, onAddCa
           <CardItem
             key={card.id}
             card={card}
+            columnName={title}
             onDragStart={(e, id) => e.dataTransfer.setData("cardId", id)}
             onRemove={() => {
               onRemoveCard(title, card.id);

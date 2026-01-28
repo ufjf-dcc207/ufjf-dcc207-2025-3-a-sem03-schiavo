@@ -1,9 +1,10 @@
 import type { Card } from '../types';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useEffect } from 'react';
 
 interface CardItemProps {
   card: Card;
+  columnName: string;
   onDragStart: (e: React.DragEvent<HTMLDivElement>, cardId: string) => void;
   onRemove: () => void;
 }
@@ -22,22 +23,26 @@ function getCardColor(days: number) {
   return 'white';
 }
 
-export default function CardItem({ card, onDragStart, onRemove }: CardItemProps) {
+export default function CardItem({ card, columnName, onDragStart, onRemove }: CardItemProps) {
 
   const [isEditing, setIsEditing] = useState(false);
   const [content, setContent] = useState(card.title);
 
   const [now, setNow] = useState(() => Date.now());
 
-  const createDate = useMemo(() => (card as any).createDate ?? Date.now(), [card]);
+  const createDate = (card as any).createDate ?? Date.now();
 
   useEffect(() => {
    const id = setInterval(() => setNow(Date.now()), 5_000);
     return () => clearInterval(id);
   }, []);
 
-  const days = useMemo(() => getDays(createDate, now), [createDate, now]);
-  const cardColor =  useMemo(() => getCardColor(days), [days]);
+  const days = getDays(createDate, now);
+  let cardColor =  getCardColor(days);
+
+  if (columnName === "Concluído") {
+    cardColor = "#abf5b1";
+  }
 
 
   return (

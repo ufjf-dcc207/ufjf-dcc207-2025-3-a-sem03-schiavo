@@ -1,6 +1,7 @@
 import type { Card } from '../types';
-import { useState } from 'react';
-import { useEffect } from 'react';
+import { useEffect, useReducer } from 'react';
+
+import { cardItemReducer, initCardItemState } from '../reducers/cardItemReducer';
 
 interface CardItemProps {
   card: Card;
@@ -25,19 +26,16 @@ function getCardColor(days: number) {
 
 export default function CardItem({ card, columnName, onDragStart, onRemove }: CardItemProps) {
 
-  const [isEditing, setIsEditing] = useState(false);
-  const [content, setContent] = useState(card.title);
-
-  const [now, setNow] = useState(() => Date.now());
+  const [state, dispatch] = useReducer(cardItemReducer, card.title, initCardItemState);
 
   const createDate = (card as any).createDate ?? Date.now();
 
   useEffect(() => {
-   const id = setInterval(() => setNow(Date.now()), 5_000);
-    return () => clearInterval(id);
+   const id = setInterval(() => dispatch({type: "TICK", now: Date.now()}), 5_000);
+   return () => clearInterval(id);
   }, []);
 
-  const days = getDays(createDate, now);
+  const days = getDays(createDate, state.now);
   let cardColor =  getCardColor(days);
 
   if (columnName === "Concluído") {
@@ -51,7 +49,7 @@ export default function CardItem({ card, columnName, onDragStart, onRemove }: Ca
       draggable
       title={`${days} dia(s)`}
       onDragStart={(e) => onDragStart(e, card.id)}
-      onDoubleClick={() => setIsEditing(true)}
+      onDoubleClick={() => dispatch({type: "START_EDIT"})}
       style={{
         display: "flex",
         justifyContent: "space-between",
@@ -64,28 +62,28 @@ export default function CardItem({ card, columnName, onDragStart, onRemove }: Ca
       }}
     >
 
-      {!isEditing ? (
-        <p style={{ margin: 0}}>{content}</p>
+      {!state.isEditing ? (
+        <p style={{ margin: 0}}>{state.content}</p>
       ): (
         <input
           autoFocus
-          value={content}
-          defaultValue={card.title}
+          value={state.content}
           onBlur={() => {
-            if (content.trim() === "") {
-              setContent(card.title);
+            if (state.content.trim() === "") {
+              dispatch({type: "RESET_CONTENT", value: card.title});
             }
-            setIsEditing(false)}}
+            dispatch({type: "STOP_EDIT"});
+          }}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
-              if (content.trim() === "") {
-                setContent(card.title)
+              if (state.content.trim() === "") {
+                dispatch({type: "RESET_CONTENT", value: card.title});
               }
-              setIsEditing(false);
+              dispatch({type: "STOP_EDIT"});
             }
           }}
           onChange={(e) => {
-            setContent(e.target.value);
+            dispatch({type: "SET_CONTENT", value: e.target.value});
           }}
           style={{
             flex: 1,
